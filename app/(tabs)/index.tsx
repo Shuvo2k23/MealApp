@@ -1,74 +1,82 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import { View, Text, Button, FlatList, Image, StyleSheet } from 'react-native'
+import React, { useState } from 'react'
+import {fetch} from 'expo/fetch'
+import { Link } from 'expo-router';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-
-export default function HomeScreen() {
+export default function Category() {
+    const [categories,setCategories] = useState([]);
+    const [processing,setProcessing] = useState(false);
+    const fetching = async()=>{
+        setProcessing(true)
+        try{
+            const get =await fetch("https://www.themealdb.com/api/json/v1/1/categories.php")
+                const jsonData = await get.json();
+                setCategories(jsonData.categories)
+        }
+        catch(error){
+    
+        }
+        finally{
+    
+          setProcessing(false)
+        }
+        
+        
+      }
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+    <View style={{flex:1,alignItems:'center', paddingTop:50,
+        
+    }}>
+      <Button title='fetch' onPress={fetching}/>
+      <FlatList data={categories} style={{gap:14,padding:5}}
+
+        renderItem={({item})=>{
+            // console.log(item);
+            return(
+                <View style={style.catContainer}>
+                    <Image source={{uri:item.strCategoryThumb}} style={style.img}/>
+                    
+                    <View style={{paddingLeft:10}}>
+                        <Text style={style.catTitle}>{item.strCategory}</Text>
+                        {/* <Text style={style.catDetail}>{item.strCategoryDescription}</Text> */}
+                        <Link href={`/meals/${item.strCategory}`}>
+                        <Button title='View Meals' />
+                        </Link>
+                        
+                    </View>
+                </View>
+            )
+            
+        }}
+      />
+    </View>
+  )
+
 }
 
-const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
+const style = StyleSheet.create({
+    img:{
+        height:150,
+        width:150,
+        borderRadius:20,
+        margin:6
+    },
+    catContainer:{
+        flex:1,
+        width:350,
+        alignItems:"center",
+        borderRadius:15,
+        borderColor:"black",
+        borderWidth:2,
+        flexDirection:'row',
+        margin:5,
+        backgroundColor:"#FAEBD7"       
+    },
+    catTitle:{
+        fontSize:20,
+        fontWeight:600
+    },
+    catDetail:{
+        
+    }
 });
