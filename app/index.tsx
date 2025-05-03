@@ -1,5 +1,5 @@
-import { View, Text, Button, FlatList, Image, StyleSheet } from 'react-native'
-import React, { useState } from 'react'
+import { View, Text, Button, FlatList, Image, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native'
+import React, { useState } from 'react';
 import {fetch} from 'expo/fetch'
 import { Link } from 'expo-router';
 
@@ -19,16 +19,35 @@ export default function Category() {
         finally{
     
           setProcessing(false)
-        }
-        
-        
+        }        
       }
   return (
-    <View style={{flex:1,alignItems:'center', paddingTop:50,
+    <View style={{flex:1,alignItems:'center',
+      flexDirection:"column"
+  }}>
+      <View style={{flex:0.1,
+        flexDirection:"row"
+      }}>
+        <TouchableOpacity style={style.myBtn} onPress={fetching}>
+          <Text style={style.btnTxt}>View Categories</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={style.myBtn} onPress={()=>{
+          setCategories([])
+        }}>
+          <Text style={style.btnTxt}>Clear Categories</Text>
+        </TouchableOpacity>
+      </View>
+      {
+        processing ?
+      <View style = {{flex:1,alignItems:'center',
+        flexDirection:"column",
+        justifyContent:'center'
+      }}>
+         <ActivityIndicator size="large" color="#007AFF" />
         
-    }}>
-      <Button title='fetch' onPress={fetching}/>
-      <FlatList data={categories} style={{gap:14,padding:5}}
+      </View>
+      :
+      <FlatList data={categories} style={{gap:14,padding:5, flex:1}}
 
         renderItem={({item})=>{
             // console.log(item);
@@ -49,6 +68,7 @@ export default function Category() {
             
         }}
       />
+      }
     </View>
   )
 
@@ -76,7 +96,18 @@ const style = StyleSheet.create({
         fontSize:20,
         fontWeight:600
     },
-    catDetail:{
-        
+    myBtn:{
+      width:170,
+      height:50,
+      backgroundColor:'#00a2ed',
+      borderRadius:5,
+      margin:7,
+      alignItems:"center"
+
+    },
+    btnTxt:{
+      color:"white",
+      fontSize:20,
+      paddingTop:10
     }
 });

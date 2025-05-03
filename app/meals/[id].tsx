@@ -1,4 +1,4 @@
-import { View, Text, Alert, FlatList, Image, Button, StyleSheet } from 'react-native'
+import { View, Text, Alert, FlatList, Image, Button, StyleSheet, Pressable, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { Link, usePathname } from 'expo-router'
 import { useSearchParams } from 'expo-router/build/hooks'
@@ -6,9 +6,9 @@ import { useSearchParams } from 'expo-router/build/hooks'
 export default function Meals() {
     const [id,setId] = useSearchParams();
     const [meals,setMeals] = useState();
-    console.log(id[1]);
+    // console.log(id);
     // const [ab,setAb] = useState();
-    const fetchMeals= async (cat:number)=>{
+    const fetchMeals= async (cat:string)=>{
       try{
         const getmeal = await fetch(`https://www.themealdb.com/api/json/v1/1/filter.php?c=${cat}`)
         const getjson = await getmeal.json()
@@ -31,23 +31,25 @@ export default function Meals() {
     // console.log(ab);
     
   return (
-    <View>
-      <FlatList data={meals} style={{gap:14,padding:5}}
+    <View style={{flex:1,gap:14,padding:25,
+      alignItems:"center"}}>
+      <FlatList data={meals}
       
               renderItem={({item})=>{
-                  console.log(item);
+                //  console.log(item);
+                 
                   return(
                       <View style={style.catContainer}>
                           <Image source={{uri:item.strMealThumb}} style={style.img}/>
                           
-                          <View style={{paddingLeft:10}}>
+                          <View style={{paddingLeft:10,flex:1}}>
                               <Text style={style.catTitle}>{item.strMeal}</Text>
-                              {/* <Text style={style.catDetail}>{item.strCategoryDescription}</Text> */}
-                              <Button title='View Details' />
-                              {/* <Link href={`/meals/${item.strCategory}`}>
                               
-                              </Link> */}
-                              
+                              <Link href={`/meals/meal/${item.idMeal}`}>
+                                <TouchableOpacity style={style.myBtn}>
+                                  <Text style={style.btnTxt}>View Details</Text>
+                                </TouchableOpacity>
+                              </Link>
                           </View>
                       </View>
                   )
@@ -80,7 +82,18 @@ const style = StyleSheet.create({
         fontSize:20,
         fontWeight:600
     },
-    catDetail:{
-        
+    myBtn:{
+      width:120,
+      height:50,
+      backgroundColor:'#00a2ed',
+      borderRadius:5,
+       margin:4
+
+    },
+    btnTxt:{
+      color:"white",
+      fontSize:20,
+      paddingTop:10,
+      paddingLeft:5
     }
 });
